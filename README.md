@@ -214,10 +214,10 @@ SMTP_PORT=587
 
 ## 16. Screenshots
 
-*   ![Dashboard](assets/dashboard.png)
-*   ![Human-in-the-Loop Review](assets/Human-loop-Mail.png)
-*   ![Analytics](assets/analytics.png)
-*   ![Observability Logs](assets/logs.png)
+*  Dashboard ![Dashboard](assets/Dashboard.png) 
+*  Human in Loop mail review ![Human-in-the-Loop Review](assets/Human-loop-Mail.png)
+*  Analytics ![Analytics](assets/Analytics.png)
+*  Observability Logs ![Observability Logs](assets/Logs.png)
 
 ---
 
