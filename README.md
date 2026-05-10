@@ -155,8 +155,8 @@ finance-collections-agent/
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/finance-collections-agent.git
-   cd finance-collections-agent
+   git clone https://github.com/17Atishay/Travel-Email-Project.git
+   cd Travel-Email-Project
    ```
 2. **Create and activate a virtual environment:**
    ```bash
@@ -224,6 +224,8 @@ SMTP_PORT=587
 
 ## 17. Future Improvements
 
+- [ ] **React + FastAPI Enterprise Architecture**: Upgrade the current Streamlit prototype into a scalable production-ready architecture using React frontend, FastAPI backend, and REST APIs for improved scalability and user experience.
+- [ ] **Advanced Security & Compliance Enhancements**: Introduce OAuth2 authentication, encrypted audit logs, SPF/DKIM/DMARC validation, and enterprise-grade access monitoring for enhanced security compliance.
 - [ ] **LangSmith Integration**: Implement LLM tracing to monitor token usage, latency, and pipeline execution graphs.
 - [ ] **ERP Integration**: Build robust connectors for NetSuite or QuickBooks for live invoice ingestion.
 - [ ] **RAG Memory**: Utilize vector databases to store and retrieve historical email threads for deeper context generation.
