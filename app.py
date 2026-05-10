@@ -13,48 +13,17 @@ st.set_page_config(
 from utils.logger import setup_logger, log_audit_event
 from utils.analytics import display_dashboard
 from utils.email_generator import generate_email, generate_email_preview
-from utils.stages import calculate_escalation_stage
-from utils.risk_engine import calculate_risk_score
+from utils.orchestrator import CollectionAgentPipeline
 
 def add_log(msg: str):
     if 'logs' not in st.session_state:
         st.session_state['logs'] = []
     st.session_state['logs'].append(f"[{datetime.now().strftime('%H:%M:%S')}] {msg}")
 
-def process_invoices(df: pd.DataFrame) -> pd.DataFrame:
-    """Processes raw invoice dataframe and adds AI calculated fields."""
-    if df.empty:
-        return df
-        
-    add_log(f"Loaded {len(df)} invoices into the processing pipeline.")
-    today = pd.to_datetime('today').normalize()
-    if 'due_date' in df.columns:
-        df['due_date'] = pd.to_datetime(df['due_date'])
-        df['days_overdue'] = (today - df['due_date']).dt.days
-        df['days_overdue'] = df['days_overdue'].apply(lambda x: max(0, x))
-    
-    if 'days_overdue' in df.columns:
-        stage_tone_tuples = df['days_overdue'].apply(calculate_escalation_stage)
-        df['stage'] = [st[0] for st in stage_tone_tuples]
-        df['tone'] = [st[1] for st in stage_tone_tuples]
-        add_log("Escalation stage calculated for all pending invoices.")
-        
-        stage_to_count = {'1st Follow-Up': 1, '2nd Follow-Up': 2, '3rd Follow-Up': 3, '4th Follow-Up': 4, 'Escalation Flag': 5}
-        df['follow_up_count'] = df['stage'].map(stage_to_count).fillna(0).astype(int)
-        
-        if 'amount' in df.columns:
-            risk_data = df.apply(lambda row: calculate_risk_score(row['days_overdue'], row['amount'], row['follow_up_count']), axis=1)
-            df['risk_level'] = [r[0] for r in risk_data]
-            df['reasoning'] = [r[1] for r in risk_data]
-            add_log("Payment risk calculated successfully.")
-        
-        df = df.drop(columns=['follow_up_count'], errors='ignore')
-        
-    # Email status placeholder
-    if 'email_status' not in df.columns:
-        df['email_status'] = "Pending"
-        
-    return df
+def process_invoices_orchestrated(df: pd.DataFrame) -> pd.DataFrame:
+    """Delegates dataframe processing to the multi-agent orchestrator."""
+    pipeline = CollectionAgentPipeline(logger_callback=add_log)
+    return pipeline.execute_workflow(df)
 
 def main():
     # Load custom CSS for enterprise feel
@@ -81,14 +50,14 @@ def main():
     if uploaded_file is not None:
         try:
             raw_df = pd.read_csv(uploaded_file)
-            st.session_state.df = process_invoices(raw_df)
+            st.session_state.df = process_invoices_orchestrated(raw_df)
             add_log(f"Loaded {len(raw_df)} invoices from uploaded CSV")
         except Exception as e:
             st.sidebar.error(f"Error loading CSV: {e}")
     elif st.sidebar.button("Load Default Sample Data", use_container_width=True):
         try:
             raw_df = pd.read_csv("data/invoices.csv")
-            st.session_state.df = process_invoices(raw_df)
+            st.session_state.df = process_invoices_orchestrated(raw_df)
             add_log(f"Loaded {len(raw_df)} invoices from sample data")
         except FileNotFoundError:
             st.sidebar.error("Sample data not found.")

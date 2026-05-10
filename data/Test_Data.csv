@@ -1,0 +1,21 @@
+invoice_id,customer_name,amount,days_overdue,stage,risk_level,email_status
+INV-1001,Acme Corp,5000,5,1st Follow-Up,Low Risk,Pending
+INV-1002,TechNova,12500.5,10,2nd Follow-Up,Medium Risk,Pending
+INV-1003,Globex Inc,850,18,3rd Follow-Up,Medium Risk,Pending
+INV-1004,Initech,2400,25,4th Follow-Up,Medium Risk,Pending
+INV-1005,Umbrella Corp,150000,40,Escalation Flag,High Risk,Pending
+INV-1006,Stark Industries,72000,3,1st Follow-Up,Low Risk,Pending
+INV-1007,Wayne Enterprises,98000,8,2nd Follow-Up,Medium Risk,Pending
+INV-1008,Wonka Industries,4500,15,3rd Follow-Up,Medium Risk,Pending
+INV-1009,Hooli,670000,29,4th Follow-Up,High Risk,Pending
+INV-1010,Pied Piper,18000,35,Escalation Flag,High Risk,Pending
+INV-1011,Massive Dynamic,9200,6,1st Follow-Up,Low Risk,Pending
+INV-1012,Vehement Capital,33000,12,2nd Follow-Up,Medium Risk,Pending
+INV-1013,Soylent Corp,7800,19,3rd Follow-Up,Medium Risk,Pending
+INV-1014,Tyrell Corporation,250000,26,4th Follow-Up,High Risk,Pending
+INV-1015,Cyberdyne Systems,1200000,50,Escalation Flag,High Risk,Pending
+INV-1016,Oscorp,2700,2,1st Follow-Up,Low Risk,Pending
+INV-1017,LexCorp,54000,9,2nd Follow-Up,Medium Risk,Pending
+INV-1018,Aperture Science,16000,16,3rd Follow-Up,Medium Risk,Pending
+INV-1019,Black Mesa,89000,24,4th Follow-Up,High Risk,Pending
+INV-1020,Roxxon Energy,430000,45,Escalation Flag,High Risk,Pending

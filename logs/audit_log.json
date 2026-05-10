@@ -9,5 +9,16 @@
         "approval_status": "Approved",
         "reviewer_comment": "HIGH",
         "send_status": "Dry Run - Simulated"
+    },
+    {
+        "timestamp": "2026-05-10T13:56:34.675488",
+        "invoice_number": "INV-1006",
+        "client_name": "Stark Industries",
+        "escalation_stage": "1st Follow-Up",
+        "tone_used": "Warm & Friendly",
+        "risk_level": "Low Risk",
+        "approval_status": "Approved",
+        "reviewer_comment": "",
+        "send_status": "Dry Run - Simulated"
     }
 ]
