@@ -1,0 +1,4 @@
+.env
+/TravelEmailVenv
+/utils/__pycache__
+utils/*.pyc

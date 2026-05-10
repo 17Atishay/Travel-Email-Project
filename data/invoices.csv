@@ -1,0 +1,6 @@
+invoice_id,customer_name,customer_email,amount,due_date,status,escalation_stage
+INV-1001,Acme Corp,billing@acmecorp.com,5000.00,2026-05-05,Overdue,1st Follow-Up
+INV-1002,TechNova,finance@technova.io,12500.50,2026-04-30,Overdue,2nd Follow-Up
+INV-1003,Globex Inc,ap@globex.net,850.00,2026-04-22,Overdue,3rd Follow-Up
+INV-1004,Initech,accounts@initech.com,2400.00,2026-04-15,Overdue,4th Follow-Up
+INV-1005,Umbrella Corp,payments@umbrellacorp.com,150000.00,2026-03-31,Overdue,Escalation Flag

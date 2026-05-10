@@ -1,0 +1,13 @@
+[
+    {
+        "timestamp": "2026-05-10T02:54:33.390661",
+        "invoice_number": "INV-1005",
+        "client_name": "Umbrella Corp",
+        "escalation_stage": "Escalation Flag",
+        "tone_used": "Flag for Legal",
+        "risk_level": "High Risk",
+        "approval_status": "Approved",
+        "reviewer_comment": "HIGH",
+        "send_status": "Dry Run - Simulated"
+    }
+]
