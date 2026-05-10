@@ -7,10 +7,7 @@ import os
 import smtplib
 import logging
 from email.mime.text import MIMEText
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
+from utils.config import get_secret
 
 # Initialize module logger
 logger = logging.getLogger("collections_agent")
@@ -36,18 +33,18 @@ def send_email(recipient_email: str, subject: str, body: str, real_email_mode: b
     logger.info("[INFO] Connecting to SMTP server...")
     
     # Retrieve SMTP credentials
-    sender_email = os.environ.get("EMAIL_ADDRESS")
-    sender_password = os.environ.get("EMAIL_PASSWORD")
-    smtp_server = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
+    sender_email = get_secret("EMAIL_ADDRESS")
+    sender_password = get_secret("EMAIL_PASSWORD")
+    smtp_server = get_secret("SMTP_SERVER", "smtp.gmail.com")
     
     try:
-        smtp_port = int(os.environ.get("SMTP_PORT", 587))
-    except ValueError:
+        smtp_port = int(get_secret("SMTP_PORT", 587))
+    except (ValueError, TypeError):
         smtp_port = 587
 
     # Validate configuration
     if not sender_email or not sender_password:
-        error_msg = "SMTP credentials missing in environment variables (.env)."
+        error_msg = "SMTP credentials missing in Streamlit Secrets or .env."
         logger.error(f"[ERROR] {error_msg}")
         return False, error_msg
 

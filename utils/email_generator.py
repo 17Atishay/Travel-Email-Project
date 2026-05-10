@@ -15,6 +15,7 @@ from langchain_core.exceptions import OutputParserException
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 from utils.prompt import EMAIL_GENERATION_AGENT_PROMPT
+from utils.config import get_secret
 
 # 1. STRUCTURED OUTPUT:
 # We use Pydantic models with LangChain's PydanticOutputParser.
@@ -45,7 +46,11 @@ def generate_email(
     # 3. HALLUCINATION MITIGATION:
     # We use a low temperature (0.1) to make the model's responses more deterministic
     # and strictly factual.
-    llm = ChatGroq(model_name="llama3-70b-8192", temperature=0.1)
+    api_key = get_secret("GROQ_API_KEY")
+    if not api_key:
+        raise ValueError("GROQ_API_KEY is not configured in Secrets or .env")
+        
+    llm = ChatGroq(model_name="llama3-70b-8192", temperature=0.1, api_key=api_key)
     
     parser = PydanticOutputParser(pydantic_object=EmailResponse)
     

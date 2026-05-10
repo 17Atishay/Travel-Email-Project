@@ -15,6 +15,7 @@ from utils.analytics import display_dashboard
 from utils.email_generator import generate_email, generate_email_preview
 from utils.orchestrator import CollectionAgentPipeline
 from utils.email_sender import send_email
+from utils.config import validate_config
 
 def add_log(msg: str):
     if 'logs' not in st.session_state:
@@ -48,6 +49,14 @@ def main():
         
     # ------------------ SIDEBAR ------------------ #
     st.sidebar.title("💰 AI Collections Agent")
+    st.sidebar.markdown("---")
+    
+    st.sidebar.markdown("### Deployment Status")
+    config_status = validate_config()
+    api_status = "✅ Connected" if config_status["api_connected"] else "❌ Missing Secret"
+    smtp_status = "✅ Configured" if config_status["smtp_configured"] else "❌ Missing Secret"
+    st.sidebar.markdown(f"**Groq API:** {api_status}")
+    st.sidebar.markdown(f"**SMTP Mail:** {smtp_status}")
     st.sidebar.markdown("---")
     
     st.sidebar.markdown("### Settings")
