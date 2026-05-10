@@ -20,5 +20,49 @@
         "approval_status": "Approved",
         "reviewer_comment": "",
         "send_status": "Dry Run - Simulated"
+    },
+    {
+        "timestamp": "2026-05-10T14:29:14.994022",
+        "invoice_number": "INV-1006",
+        "client_name": "Stark Industries",
+        "escalation_stage": "1st Follow-Up",
+        "tone_used": "Warm & Friendly",
+        "risk_level": "Low Risk",
+        "approval_status": "Approved",
+        "reviewer_comment": "",
+        "send_status": "Dry Run - Simulated"
+    },
+    {
+        "timestamp": "2026-05-10T14:30:30.176026",
+        "invoice_number": "INV-1008",
+        "client_name": "Wonka Industries",
+        "escalation_stage": "3rd Follow-Up",
+        "tone_used": "Formal & Serious",
+        "risk_level": "Medium Risk",
+        "approval_status": "Approved",
+        "reviewer_comment": "",
+        "send_status": "Sent Successfully"
+    },
+    {
+        "timestamp": "2026-05-10T14:34:46.621928",
+        "invoice_number": "INV-1008",
+        "client_name": "Wonka Industries",
+        "escalation_stage": "3rd Follow-Up",
+        "tone_used": "Formal & Serious",
+        "risk_level": "Medium Risk",
+        "approval_status": "Approved",
+        "reviewer_comment": "",
+        "send_status": "Sent Successfully"
+    },
+    {
+        "timestamp": "2026-05-10T14:38:41.225508",
+        "invoice_number": "INV-1008",
+        "client_name": "Wonka Industries",
+        "escalation_stage": "3rd Follow-Up",
+        "tone_used": "Formal & Serious",
+        "risk_level": "Medium Risk",
+        "approval_status": "Rejected",
+        "reviewer_comment": "",
+        "send_status": "Dry Run - Not Sent"
     }
 ]

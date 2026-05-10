@@ -26,7 +26,13 @@ def log_audit_event(
     risk_level: str,
     approval_status: str,
     reviewer_comment: str,
-    send_status: str = "Dry Run - Simulated"
+    send_status: str = "Dry Run - Simulated",
+    is_modified: bool = False,
+    original_subject: str = "",
+    original_body: str = "",
+    final_subject: str = "",
+    final_body: str = "",
+    modification_timestamp: str = None
 ):
     """
     Logs structured audit data to logs/audit_log.json for compliance.
@@ -43,7 +49,13 @@ def log_audit_event(
         "risk_level": risk_level,
         "approval_status": approval_status,
         "reviewer_comment": reviewer_comment,
-        "send_status": send_status
+        "send_status": send_status,
+        "human_modified": is_modified,
+        "original_subject": original_subject,
+        "original_body": original_body,
+        "final_subject": final_subject,
+        "final_body": final_body,
+        "modification_timestamp": modification_timestamp
     }
     
     audit_logs = []

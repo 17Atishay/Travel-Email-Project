@@ -14,6 +14,7 @@ from utils.logger import setup_logger, log_audit_event
 from utils.analytics import display_dashboard
 from utils.email_generator import generate_email, generate_email_preview
 from utils.orchestrator import CollectionAgentPipeline
+from utils.email_sender import send_email
 
 def add_log(msg: str):
     if 'logs' not in st.session_state:
@@ -40,9 +41,19 @@ def main():
     
     if 'df' not in st.session_state:
         st.session_state.df = pd.DataFrame()
+    if 'real_emails_sent' not in st.session_state:
+        st.session_state.real_emails_sent = 0
+    if 'email_drafts' not in st.session_state:
+        st.session_state.email_drafts = {}
         
     # ------------------ SIDEBAR ------------------ #
     st.sidebar.title("💰 AI Collections Agent")
+    st.sidebar.markdown("---")
+    
+    st.sidebar.markdown("### Settings")
+    real_email_mode = st.sidebar.checkbox("Enable Real Email Sending", value=False)
+    if real_email_mode:
+        st.sidebar.warning("⚠️ REAL EMAILS WILL BE SENT TO CLIENTS. MAXIMUM 5 PER RUN.")
     st.sidebar.markdown("---")
     
     st.sidebar.markdown("### Data Source")
@@ -138,14 +149,13 @@ def main():
             if selected_invoice:
                 row = df[df['invoice_id'] == selected_invoice].iloc[0]
                 
-                with st.expander("🤖 AI Risk & Reasoning", expanded=True):
+                with st.expander("🤖 AI Risk & Reasoning", expanded=False):
                     st.write(f"**Risk Level:** `{row['risk_level']}`")
                     st.write(f"**Tone Selected:** `{row['tone']}`")
                     st.write(f"**Reasoning:** {row['reasoning']}")
                 
-                with st.expander("✉️ Generated Email Preview", expanded=True):
-                    # In a real scenario, this would pull the actual LLM generated email 
-                    # If it was pre-generated. For now, we show a smart preview placeholder.
+                # --- DRAFT INITIALIZATION ---
+                if selected_invoice not in st.session_state.email_drafts:
                     subject_text = f"Action Required: Overdue Invoice {row['invoice_id']}"
                     body_text = (
                         f"Dear {row['customer_name']},\n\n"
@@ -158,37 +168,123 @@ def main():
                         body_text = "No email generated. Account flagged for legal review."
                         subject_text = "N/A"
                         
-                    st.text_area("Subject:", value=subject_text, disabled=True)
-                    st.text_area("Body:", value=body_text, height=200, disabled=True)
+                    st.session_state.email_drafts[selected_invoice] = {
+                        "original_subject": subject_text,
+                        "original_body": body_text,
+                        "edited_subject": subject_text,
+                        "edited_body": body_text,
+                        "is_modified": False,
+                        "modification_timestamp": None
+                    }
                 
+                draft = st.session_state.email_drafts[selected_invoice]
+                
+                st.info("ℹ️ Human approval required before outbound communication.")
+                
+                # --- EDITOR VIEW ---
+                with st.expander("📝 Edit Email Draft", expanded=True):
+                    new_subject = st.text_input("Subject:", value=draft["edited_subject"], key=f"subj_{selected_invoice}")
+                    new_body = st.text_area("Body:", value=draft["edited_body"], height=200, key=f"body_{selected_invoice}")
+                    
+                    if st.button("💾 Save Changes", use_container_width=True):
+                        if new_subject != draft["original_subject"] or new_body != draft["original_body"]:
+                            st.session_state.email_drafts[selected_invoice]["edited_subject"] = new_subject
+                            st.session_state.email_drafts[selected_invoice]["edited_body"] = new_body
+                            st.session_state.email_drafts[selected_invoice]["is_modified"] = True
+                            st.session_state.email_drafts[selected_invoice]["modification_timestamp"] = datetime.now().isoformat()
+                            st.success("Changes saved! Marked as HUMAN_MODIFIED.")
+                            add_log(f"Reviewer edited email for {selected_invoice}")
+                        else:
+                            st.info("No changes detected.")
+                            
+                # --- COMPARISON VIEW ---
+                draft = st.session_state.email_drafts[selected_invoice] # refresh after save
+                if draft["is_modified"]:
+                    with st.expander("🔍 Compare Original vs Edited", expanded=False):
+                        comp_col1, comp_col2 = st.columns(2)
+                        with comp_col1:
+                            st.markdown("##### 🤖 AI Generated Draft")
+                            st.text_area("Orig Subj:", value=draft["original_subject"], disabled=True, key=f"os_{selected_invoice}")
+                            st.text_area("Orig Body:", value=draft["original_body"], disabled=True, height=150, key=f"ob_{selected_invoice}")
+                        with comp_col2:
+                            st.markdown("##### 👤 Human Reviewed Version")
+                            st.text_area("Edit Subj:", value=draft["edited_subject"], disabled=True, key=f"es_{selected_invoice}")
+                            st.text_area("Edit Body:", value=draft["edited_body"], disabled=True, height=150, key=f"eb_{selected_invoice}")
+
                 st.markdown("#### Human-in-the-Loop")
                 reviewer_comment = st.text_area("Reviewer Comment:", placeholder="Add notes for audit trail...")
                 
                 btn_col1, btn_col2 = st.columns(2)
                 with btn_col1:
-                    if st.button("✅ Approve Email", type="primary", use_container_width=True):
-                        add_log(f"Approval action: Approved dry-run email for {selected_invoice}")
+                    if st.button("✅ Approve & Send", type="primary", use_container_width=True):
                         if row['stage'] == 'Escalation Flag':
                             add_log(f"Escalation flagged: {selected_invoice} sent for Legal/Finance Review")
-                        
-                        # Log to audit file
-                        log_audit_event(
-                            invoice_id=selected_invoice,
-                            client_name=row['customer_name'],
-                            stage=row['stage'],
-                            tone=row['tone'],
-                            risk_level=row['risk_level'],
-                            approval_status="Approved",
-                            reviewer_comment=reviewer_comment,
-                            send_status="Dry Run - Simulated"
-                        )
-                        st.success(f"Approved {selected_invoice} (Dry Run)")
+                            st.info("Account flagged. No email sent.")
+                            
+                            log_audit_event(
+                                invoice_id=selected_invoice,
+                                client_name=row['customer_name'],
+                                stage=row['stage'],
+                                tone=row['tone'],
+                                risk_level=row['risk_level'],
+                                approval_status="Escalated",
+                                reviewer_comment=reviewer_comment,
+                                send_status="N/A",
+                                is_modified=draft["is_modified"],
+                                original_subject=draft["original_subject"],
+                                original_body=draft["original_body"],
+                                final_subject=draft["edited_subject"],
+                                final_body=draft["edited_body"],
+                                modification_timestamp=draft["modification_timestamp"]
+                            )
+                        else:
+                            add_log(f"Approval action: Approved email for {selected_invoice}")
+                            
+                            send_status = "Dry Run - Simulated"
+                            if real_email_mode:
+                                if st.session_state.real_emails_sent >= 5:
+                                    st.error("Batch limit reached (5 emails). Cannot send more real emails in this run.")
+                                    send_status = "FAILED: Batch Limit Reached"
+                                    add_log(send_status)
+                                else:
+                                    recipient = row.get("customer_email", "fallback@example.com") 
+                                    success, status_msg = send_email(
+                                        recipient_email=recipient,
+                                        subject=draft["edited_subject"],
+                                        body=draft["edited_body"],
+                                        real_email_mode=True
+                                    )
+                                    send_status = status_msg
+                                    if success:
+                                        st.session_state.real_emails_sent += 1
+                                        st.success(f"Email successfully sent to {row['customer_name']}!")
+                                        add_log(f"Real email sent to {recipient}")
+                                    else:
+                                        st.error(f"Failed to send: {status_msg}")
+                            else:
+                                st.success(f"Approved {selected_invoice} (Dry Run)")
+                            
+                            log_audit_event(
+                                invoice_id=selected_invoice,
+                                client_name=row['customer_name'],
+                                stage=row['stage'],
+                                tone=row['tone'],
+                                risk_level=row['risk_level'],
+                                approval_status="Approved",
+                                reviewer_comment=reviewer_comment,
+                                send_status=send_status,
+                                is_modified=draft["is_modified"],
+                                original_subject=draft["original_subject"],
+                                original_body=draft["original_body"],
+                                final_subject=draft["edited_subject"],
+                                final_body=draft["edited_body"],
+                                modification_timestamp=draft["modification_timestamp"]
+                            )
                         
                 with btn_col2:
-                    if st.button("❌ Reject / Edit", use_container_width=True):
+                    if st.button("❌ Reject Email", use_container_width=True):
                         add_log(f"Approval action: Rejected email for {selected_invoice}")
                         
-                        # Log to audit file
                         log_audit_event(
                             invoice_id=selected_invoice,
                             client_name=row['customer_name'],
@@ -197,7 +293,13 @@ def main():
                             risk_level=row['risk_level'],
                             approval_status="Rejected",
                             reviewer_comment=reviewer_comment,
-                            send_status="Dry Run - Not Sent"
+                            send_status="Dry Run - Not Sent",
+                            is_modified=draft["is_modified"],
+                            original_subject=draft["original_subject"],
+                            original_body=draft["original_body"],
+                            final_subject=draft["edited_subject"],
+                            final_body=draft["edited_body"],
+                            modification_timestamp=draft["modification_timestamp"]
                         )
                         st.error(f"Rejected {selected_invoice}")
             else:
