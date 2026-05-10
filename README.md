@@ -214,11 +214,10 @@ SMTP_PORT=587
 
 ## 16. Screenshots
 
-*(Replace these placeholders with actual screenshots of the application)*
-
-*   ![Dashboard Workflow](https://via.placeholder.com/800x400?text=Executive+Dashboard+&+Workflow)
-*   ![Human-in-the-Loop Review](https://via.placeholder.com/800x400?text=Human-in-the-Loop+Approval+Panel)
-*   ![Analytics & Observability](https://via.placeholder.com/800x400?text=Plotly+Analytics+&+System+Logs)
+*   ![Dashboard](assets/dashboard.png)
+*   ![Human-in-the-Loop Review](assets/Human-loop-Mail.png)
+*   ![Analytics](assets/analytics.png)
+*   ![Observability Logs](assets/logs.png)
 
 ---
 

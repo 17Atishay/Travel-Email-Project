@@ -64,5 +64,22 @@
         "approval_status": "Rejected",
         "reviewer_comment": "",
         "send_status": "Dry Run - Not Sent"
+    },
+    {
+        "timestamp": "2026-05-10T15:53:51.001726",
+        "invoice_number": "INV-1003",
+        "client_name": "Globex Inc",
+        "escalation_stage": "3rd Follow-Up",
+        "tone_used": "Formal & Serious",
+        "risk_level": "Medium Risk",
+        "approval_status": "Approved",
+        "reviewer_comment": "",
+        "send_status": "Sent Successfully",
+        "human_modified": false,
+        "original_subject": "Action Required: Overdue Invoice INV-1003",
+        "original_body": "Dear Globex Inc,\n\nThis is a formal & serious reminder regarding invoice INV-1003 for the amount of $850.00, which is currently 18 days overdue.\n\nPlease ensure payment is made promptly.\n\nBest regards,\nFinance Team",
+        "final_subject": "Action Required: Overdue Invoice INV-1003",
+        "final_body": "Dear Globex Inc,\n\nThis is a formal & serious reminder regarding invoice INV-1003 for the amount of $850.00, which is currently 18 days overdue.\n\nPlease ensure payment is made promptly.\n\nBest regards,\nFinance Team",
+        "modification_timestamp": null
     }
 ]
