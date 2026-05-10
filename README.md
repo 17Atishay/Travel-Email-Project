@@ -19,6 +19,11 @@ In enterprise accounts receivable, managing overdue invoices is a highly sensiti
 
 The **Finance Credit Follow-Up Email Agent** solves this problem by introducing a lightweight, multi-agent AI architecture to the collections workflow. It analyzes overdue portfolios in real-time, autonomously scores payment risk, intelligently selects the correct escalation tone based on corporate matrices, and generates highly personalized communication—while strictly requiring **human-in-the-loop (HITL)** approval before any outbound SMTP dispatch. This ensures maximum efficiency without sacrificing financial compliance or client trust.
 
+## Live Demo
+
+🔗 Deployed Application: [https://Finance Credit Follow-Up Email Agent.streamlit.app](https://17atishay-travel-email-project-app-2nqcpl.streamlit.app/)
+
+
 ## 2. Key Features
 
 - 🧠 **Multi-Agent Architecture**: Segregated responsibilities across Supervisor, Analysis, Risk, Tone, and Generation agents.
